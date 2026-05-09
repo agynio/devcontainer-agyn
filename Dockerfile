@@ -7,6 +7,8 @@ RUN mkdir -p /etc/nix \
         'sandbox = false' \
         'filter-syscalls = false' \
         > /etc/nix/nix.conf \
+    && nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs \
+    && nix-channel --update \
     && NIXPKGS_ALLOW_UNFREE=1 nix-env --impure -f '<nixpkgs>' -iA \
         nodejs_24 \
         go \
