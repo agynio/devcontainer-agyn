@@ -6,6 +6,8 @@ RUN NIXPKGS_ALLOW_UNFREE=1 nix-env --impure -f '<nixpkgs>' -iA \
         nodejs_24 \
         go \
         terraform \
+        git \
         gh \
+    && GH_PROMPT_DISABLED=1 gh extension install agynio/gh-pr-review \
     && nix-store --gc \
     && nix-store --optimise
