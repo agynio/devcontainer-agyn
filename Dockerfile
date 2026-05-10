@@ -17,5 +17,4 @@ RUN mkdir -p /etc/nix \
         git \
         gh \
     && GH_PROMPT_DISABLED=1 gh extension install agynio/gh-pr-review \
-    && nix-store --gc \
-    && nix-store --optimise
+    && nix-store --gc
