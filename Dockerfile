@@ -36,7 +36,7 @@ RUN mkdir -p /etc/nix \
     && unzip /tmp/terraform.zip -d /usr/local/bin \
     && chmod +x /usr/local/bin/terraform \
     && rm /tmp/terraform.zip \
+    && npm config set prefix /usr/local \
     && npm install -g "tfx-cli@${TFX_CLI_VERSION}" \
-    && ln -s "$(npm prefix -g)/bin/tfx" /usr/local/bin/tfx \
     && GH_PROMPT_DISABLED=1 gh extension install agynio/gh-pr-review \
     && nix-store --gc
