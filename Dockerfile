@@ -3,6 +3,7 @@ FROM ${BASE_IMAGE}
 
 ARG TARGETARCH
 ARG TERRAFORM_VERSION=1.15.2
+ARG TFX_CLI_VERSION=0.23.3
 
 RUN mkdir -p /etc/nix \
     && printf '%s\n' \
@@ -30,10 +31,12 @@ RUN mkdir -p /etc/nix \
             esac ;; \
         *) echo "Unsupported TARGETARCH: ${TARGETARCH}" >&2; exit 1 ;; \
     esac \
-    && curl -fsSLo /tmp/terraform.zip \
+    && curl --retry 5 --retry-all-errors -fsSLo /tmp/terraform.zip \
         "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${terraform_arch}.zip" \
     && unzip /tmp/terraform.zip -d /usr/local/bin \
     && chmod +x /usr/local/bin/terraform \
     && rm /tmp/terraform.zip \
+    && npm config set prefix /usr/local \
+    && npm install -g "tfx-cli@${TFX_CLI_VERSION}" \
     && GH_PROMPT_DISABLED=1 gh extension install agynio/gh-pr-review \
     && nix-store --gc
