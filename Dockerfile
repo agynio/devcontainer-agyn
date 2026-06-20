@@ -37,27 +37,6 @@ RUN mkdir -p /etc/nix \
     && chmod +x /usr/local/bin/terraform \
     && rm /tmp/terraform.zip \
     && npm install -g "tfx-cli@${TFX_CLI_VERSION}" \
-    && tfx_bin="$(npm prefix -g)/bin/tfx" \
-    && printf '%s\n' \
-        '#!/bin/sh' \
-        'set -eu' \
-        "TFX_BIN='${tfx_bin}'" \
-        "case \"\${1:-}\" in" \
-        '    --version)' \
-        "        exec \"\${TFX_BIN}\" version" \
-        '        ;;' \
-        '    help)' \
-        '        shift' \
-        "        if [ \"\$#\" -eq 0 ]; then" \
-        "            exec \"\${TFX_BIN}\" --help" \
-        '        fi' \
-        "        exec \"\${TFX_BIN}\" \"\$@\" --help" \
-        '        ;;' \
-        '    *)' \
-        "        exec \"\${TFX_BIN}\" \"\$@\"" \
-        '        ;;' \
-        'esac' \
-        > /usr/local/bin/tfx \
-    && chmod +x /usr/local/bin/tfx \
+    && ln -s "$(npm prefix -g)/bin/tfx" /usr/local/bin/tfx \
     && GH_PROMPT_DISABLED=1 gh extension install agynio/gh-pr-review \
     && nix-store --gc
