@@ -5,20 +5,31 @@ ARG TARGETARCH
 ARG TERRAFORM_VERSION=1.15.2
 ARG TFX_CLI_VERSION=0.23.3
 ARG GH_PR_REVIEW_VERSION=v1.6.2
-ARG GH_PR_REVIEW_LINUX_AMD64_SHA256=2b7d4f2416f195e98010cb3e2b5684b285808e62864f89dea8497dbe691d7ed0
-ARG GH_PR_REVIEW_LINUX_ARM64_SHA256=fea079f78e7224200d23de847b6210134ccec1a4d2dcff96ca8ca4ce1060fdde
+ARG GH_PR_REVIEW_LINUX_AMD64_SHA256
+ARG GH_PR_REVIEW_LINUX_ARM64_SHA256
 
 RUN case "${TARGETARCH}" in \
-        amd64) image_arch=amd64; gh_pr_review_sha256="${GH_PR_REVIEW_LINUX_AMD64_SHA256}" ;; \
-        arm64) image_arch=arm64; gh_pr_review_sha256="${GH_PR_REVIEW_LINUX_ARM64_SHA256}" ;; \
+        amd64) image_arch=amd64; gh_pr_review_sha256_override="${GH_PR_REVIEW_LINUX_AMD64_SHA256}" ;; \
+        arm64) image_arch=arm64; gh_pr_review_sha256_override="${GH_PR_REVIEW_LINUX_ARM64_SHA256}" ;; \
         '') image_arch="$(uname -m)"; \
             case "${image_arch}" in \
-                x86_64) image_arch=amd64; gh_pr_review_sha256="${GH_PR_REVIEW_LINUX_AMD64_SHA256}" ;; \
-                aarch64) image_arch=arm64; gh_pr_review_sha256="${GH_PR_REVIEW_LINUX_ARM64_SHA256}" ;; \
+                x86_64) image_arch=amd64; gh_pr_review_sha256_override="${GH_PR_REVIEW_LINUX_AMD64_SHA256}" ;; \
+                aarch64) image_arch=arm64; gh_pr_review_sha256_override="${GH_PR_REVIEW_LINUX_ARM64_SHA256}" ;; \
                 *) echo "Unsupported host architecture: ${image_arch}" >&2; exit 1 ;; \
             esac ;; \
         *) echo "Unsupported TARGETARCH: ${TARGETARCH}" >&2; exit 1 ;; \
     esac \
+    && if [ -n "${gh_pr_review_sha256_override}" ]; then \
+        gh_pr_review_sha256="${gh_pr_review_sha256_override}"; \
+    else \
+        case "${GH_PR_REVIEW_VERSION}:${image_arch}" in \
+            v1.6.2:amd64) gh_pr_review_sha256=2b7d4f2416f195e98010cb3e2b5684b285808e62864f89dea8497dbe691d7ed0 ;; \
+            v1.6.2:arm64) gh_pr_review_sha256=fea079f78e7224200d23de847b6210134ccec1a4d2dcff96ca8ca4ce1060fdde ;; \
+            v1.6.1:amd64) gh_pr_review_sha256=b4df605705ae0cfc169de9fdd313660dd042b966faee6254ebb7518e3232f37e ;; \
+            v1.6.1:arm64) gh_pr_review_sha256=37b7ac75693512d52d96b31f8d2938fdb75428a864d73c1169d23df1d52ab984 ;; \
+            *) echo "Unsupported gh-pr-review release: ${GH_PR_REVIEW_VERSION}/${image_arch}" >&2; exit 1 ;; \
+        esac; \
+    fi \
     && mkdir -p /etc/nix \
     && printf '%s\n' \
         'sandbox = false' \
