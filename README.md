@@ -11,8 +11,9 @@ the target architecture:
 docker build \
   --build-arg GH_PR_REVIEW_VERSION=vX.Y.Z \
   --build-arg GH_PR_REVIEW_LINUX_AMD64_SHA256=<linux-amd64-sha256> \
+  --build-arg GH_PR_REVIEW_LINUX_ARM64_SHA256=<linux-arm64-sha256> \
   .
 ```
 
-For multi-platform builds of an unmapped release, pass both
-`GH_PR_REVIEW_LINUX_AMD64_SHA256` and `GH_PR_REVIEW_LINUX_ARM64_SHA256`.
+For single-platform builds of an unmapped release, only the checksum for the
+target architecture is required.
