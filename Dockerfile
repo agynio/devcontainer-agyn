@@ -41,7 +41,12 @@ RUN case "${TARGETARCH}" in \
     && rm /tmp/terraform.zip \
     && npm config set prefix /usr/local \
     && npm install -g "tfx-cli@${TFX_CLI_VERSION}" \
-    && gh_pr_review_path="${HOME}/.local/share/gh/extensions/gh-pr-review/gh-pr-review" \
-    && GH_NO_UPDATE_NOTIFIER=1 gh extension install agynio/gh-pr-review --pin "${GH_PR_REVIEW_VERSION}" \
+    && gh_pr_review_path="/opt/gh-pr-review/gh-pr-review" \
+    && mkdir -p "$(dirname "${gh_pr_review_path}")" \
+    && curl --retry 5 --retry-all-errors -fsSLo "${gh_pr_review_path}" \
+        "https://github.com/agynio/gh-pr-review/releases/download/${GH_PR_REVIEW_VERSION}/linux-${image_arch}" \
     && printf '%s  %s\n' "${gh_pr_review_sha256}" "${gh_pr_review_path}" | sha256sum -c - \
+    && chmod +x "${gh_pr_review_path}" \
+    && cd "$(dirname "${gh_pr_review_path}")" \
+    && gh extension install . \
     && nix-store --gc
