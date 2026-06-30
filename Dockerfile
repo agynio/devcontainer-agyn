@@ -1,6 +1,20 @@
 ARG BASE_IMAGE=ghcr.io/agynio/devcontainer:sha-8ff09f8
 FROM ${BASE_IMAGE}
 
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        fontconfig \
+        fonts-dejavu-core \
+        fonts-liberation \
+        fonts-noto-core \
+        fonts-noto-cjk \
+        fonts-noto-color-emoji; \
+    fc-cache -f; \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
 ARG TARGETARCH
 ARG TERRAFORM_VERSION=1.15.2
 ARG TFX_CLI_VERSION=0.23.3
