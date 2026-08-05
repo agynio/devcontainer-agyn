@@ -63,7 +63,7 @@ RUN case "${TARGETARCH}" in \
         > /etc/nix/nix.conf \
     && nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs \
     && nix-channel --update \
-    && nix-env --impure -f '<nixpkgs>' -iA \
+    && nix-env -f '<nixpkgs>' -iA \
         nodejs_24 \
         go \
         ripgrep \
